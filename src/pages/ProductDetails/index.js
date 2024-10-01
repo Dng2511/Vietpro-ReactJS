@@ -5,6 +5,7 @@ import { getImgProduct } from "../../shared/ultils";
 import moment from "moment/moment";
 import { useDispatch } from "react-redux";
 import { ADD_TO_CART } from "../../shared/constants/action-type";
+import { currencyType } from "../../shared/constants/currency-type";
 const ProductDetails = () => {
     const param = useParams();
     const navigate =useNavigate();
@@ -69,7 +70,7 @@ const ProductDetails = () => {
                                 <li><span>Tình trạng:</span> {status}</li>
                                 <li><span>Khuyến Mại:</span>{promotion}</li>
                                 <li id="price">Giá Bán (chưa bao gồm VAT)</li>
-                                <li id="price-number">{price}</li>
+                                <li id="price-number">{currencyType(price)}</li>
                                 <li id="status">{is_stock ? "Còn hàng" : "Hết hàng"}</li>
                             </ul>
                             <div id="add-cart">

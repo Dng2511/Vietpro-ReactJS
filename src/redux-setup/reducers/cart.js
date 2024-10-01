@@ -25,8 +25,8 @@ const updateCart = (state, payload) => {
         if (item._id === payload._id) item.qty = payload.qty;
         return item;
     })
+    
     return {...state, items: newItems};
-
 }
 
 const deleteCart = (state, payload) => {

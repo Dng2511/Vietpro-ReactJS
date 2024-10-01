@@ -1,23 +1,59 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getImgProduct } from "../../shared/ultils";
 import {currencyType} from "../../shared/constants/currency-type";
-import { UPDATE_CART } from "../../shared/constants/action-type";
+import { UPDATE_CART, DELETE_CART } from "../../shared/constants/action-type";
+import { postOrder } from "../../services/Api";
+import { useNavigate } from "react-router-dom";
 const Cart = () => {
+    const navigate = useNavigate();
     const items = useSelector(({ cart }) => cart.items);
     const dispatch = useDispatch();
-
-
+    const [info, setInfo] = React.useState({});
+    /* const emailRegex = /[^@]{2,64}@[^.]{2,253}\.[0-9a-z-.]{2,63}/; */
+    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    const onChangeInfo = (e) => {
+        const {name, value} = e.target;
+        setInfo({...info, [name]: value});
+    }
     const updateCart = (id, qty) => {
+        qty = parseInt(qty); 
+        if (qty <=0) 
         dispatch({
             type: UPDATE_CART,
             payload:{
                 _id: id,
-                qty: eval(qty),
+                qty: parseInt(qty),
             }
         })
         
     }
+    const deleteCart = (e, id) =>{
+        e.preventDefault();
+        dispatch({
+            type: DELETE_CART,
+            payload: {
+                _id: id,
+            }
+        })
+    }
+
+    const order = (e) => {
+        e.preventDefault();
+        const orderInfo = {...info, items}
+        /* if (!emailRegex.test(orderInfo.email)) alert("email không hợp lệ"); */
+        if (!phoneRegex.test(orderInfo.phone)) alert("số điện thoại không hợp lệ");
+        else if (orderInfo.items.length < 1) alert("Giỏ hàng trống");
+        else {
+            postOrder(orderInfo, {}).then(({data}) => {
+                if (data.status == "success") {
+                    navigate('/Success');
+                } else alert("Đặt hàng thất bại!");
+            })
+        };
+
+    }
+
     return (
         <>
             <div>
@@ -37,9 +73,9 @@ const Cart = () => {
                                                 <h4>{item.name}</h4>
                                             </div>
                                             <div className="cart-quantity col-lg-2 col-md-2 col-sm-12">
-                                                <input type="number" id="quantity" className="form-control form-blue quantity" onChange={(e) => updateCart(e.target.value)}  value = {item.qty}></input>
+                                                <input type="number" id="quantity" className="form-control form-blue quantity" onChange={(e) => updateCart(item._id, e.target.value)}  value = {item.qty}></input>
                                             </div>
-                                            <div className="cart-price col-lg-3 col-md-3 col-sm-12"><b>{currencyType(item.qty*item.price)}</b><a href="#">Xóa</a></div>
+                                            <div className="cart-price col-lg-3 col-md-3 col-sm-12"><b>{currencyType(item.qty*item.price)}</b><a onClick={(e) => deleteCart(e, item._id)} href = "#">Xóa</a></div>
                                         </div>)
                                 })
                             }
@@ -47,7 +83,6 @@ const Cart = () => {
 
                         <div className="row">
                             <div className="cart-thumb col-lg-7 col-md-7 col-sm-12">
-                                <button id="update-cart" className="btn btn-success" type="submit" name="sbm">Cập nhật giỏ hàng</button>
                             </div>
                             <div className="cart-total col-lg-2 col-md-2 col-sm-12"><b>Tổng cộng:</b></div>
                             <div className="cart-price col-lg-3 col-md-3 col-sm-12"><b>{currencyType(items.reduce((total, item)=>total + item.qty*item.price, 0))}</b></div>
@@ -60,28 +95,28 @@ const Cart = () => {
                     <form method="post">
                         <div className="row">
                             <div id="customer-name" className="col-lg-4 col-md-4 col-sm-12">
-                                <input placeholder="Họ và tên (bắt buộc)" type="text" name="name" className="form-control" required />
+                                <input onChange={(e) => onChangeInfo(e)} placeholder="Họ và tên (bắt buộc)" type="text" name="name" className="form-control" required />
                             </div>
                             <div id="customer-phone" className="col-lg-4 col-md-4 col-sm-12">
-                                <input placeholder="Số điện thoại (bắt buộc)" type="text" name="phone" className="form-control" required />
+                                <input onChange={(e) => onChangeInfo(e)} placeholder="Số điện thoại (bắt buộc)" type="text" name="phone" className="form-control" required />
                             </div>
                             <div id="customer-mail" className="col-lg-4 col-md-4 col-sm-12">
-                                <input placeholder="Email (bắt buộc)" type="text" name="mail" className="form-control" required />
+                                <input onChange={(e) => onChangeInfo(e)} placeholder="Email (bắt buộc)" type="email" name="mail" className="form-control" required />
                             </div>
                             <div id="customer-add" className="col-lg-12 col-md-12 col-sm-12">
-                                <input placeholder="Địa chỉ nhà riêng hoặc cơ quan (bắt buộc)" type="text" name="add" className="form-control" required />
+                                <input onChange={(e) => onChangeInfo(e)} placeholder="Địa chỉ nhà riêng hoặc cơ quan (bắt buộc)" type="text" name="add" className="form-control" required />
                             </div>
                         </div>
                     </form>
                     <div className="row">
                         <div className="by-now col-lg-6 col-md-6 col-sm-12">
-                            <a href="#">
+                            <a onClick={(e) => order(e)} href="#">
                                 <b>Mua ngay</b>
                                 <span>Giao hàng tận nơi siêu tốc</span>
                             </a>
                         </div>
                         <div className="by-now col-lg-6 col-md-6 col-sm-12">
-                            <a href="#">
+                            <a>
                                 <b>Trả góp Online</b>
                                 <span>Vui lòng call (+84) 0988 550 553</span>
                             </a>

@@ -13,7 +13,12 @@ const Category = () => {
     const [category, setCategory] = React.useState("");
     React.useEffect(() => {
         getCategory(id, {}).then(({data})=>setCategory(data.data))
-        getProductsCategory(id, {}).then(({ data }) => {
+        getProductsCategory(id, {
+            params: {
+                limit: 12,
+                page: page,
+            }
+        }).then(({ data }) => {
             setProductsCategory(data.data.docs);
             setPages(data.pages);
     });

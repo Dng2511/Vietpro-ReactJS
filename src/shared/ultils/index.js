@@ -1,3 +1,3 @@
 import { BASE_URL } from "../constants/app";
 
-export const getImgProduct = (name) => `${BASE_URL}/assets/uploads/products/${name}`;
+export const getImgProduct = (thumbnail) => `${BASE_URL}/Dng2511/Vietpro-NodeJS/refs/heads/main/src/public/images/${thumbnail}`;

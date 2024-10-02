@@ -1,25 +1,31 @@
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { getCommentsProduct, getProductDetails, postCommentsProduct } from "../../services/Api";
 import { getImgProduct } from "../../shared/ultils";
 import moment from "moment/moment";
 import { useDispatch } from "react-redux";
 import { ADD_TO_CART } from "../../shared/constants/action-type";
 import { currencyType } from "../../shared/constants/currency-type";
+import Pagination from "../../shared/components/Pagination";
 const ProductDetails = () => {
     const param = useParams();
+    const [searchParams] = useSearchParams();
     const navigate =useNavigate();
     const id = param.id;
+    const page = searchParams.get("page") || 1;
     const dispatch = useDispatch();
     const [productDetails, setProductDetails] = React.useState({});
     const {name, image, accessories, status, promotion, price, is_stock, details} = productDetails;
     const [commentsList, setComment] = React.useState([]);
     const [inputComment, setInputComment] = React.useState([]);
-    const getComment = (id) => getCommentsProduct(id, {}).then(({ data }) => setComment(data.data.docs));
+    const [pages, setPages] = React.useState({})
+    const getComment = (id) => getCommentsProduct(id, {}).then(({ data }) => {
+        setComment(data.data.docs)
+        setPages(data.pages)});
     React.useEffect(() => {
         getProductDetails(id, {}).then(({ data }) => setProductDetails(data.data));
         getComment(id);
-    }, [id]);
+    }, [id, page]);
     const onChangeInput = (e) => {
         const { name, value } = e.target;
         setInputComment({ ...inputComment, [name]: value })
@@ -29,7 +35,7 @@ const ProductDetails = () => {
 
         e.preventDefault()
         postCommentsProduct(id, inputComment, {}).then(({ data }) => {
-            if (data.status == "success") setInputComment("");
+            if (data.status === "success") setInputComment("");
             getComment(id);
         })
     }
@@ -60,7 +66,7 @@ const ProductDetails = () => {
                 <div id="product">
                     <div id="product-head" className="row">
                         <div id="product-img" className="col-lg-6 col-md-6 col-sm-12">
-                            <img src={getImgProduct(image)} />
+                            <img src={getImgProduct(image)} alt=""/>
                         </div>
                         <div id="product-details" className="col-lg-6 col-md-6 col-sm-12">
                             <h1>{name}</h1>
@@ -134,13 +140,7 @@ const ProductDetails = () => {
                 </div>
                 {/*	End Product	*/}
                 <div id="pagination">
-                    <ul className="pagination">
-                        <li className="page-item"><a className="page-link" href="#">Trang trước</a></li>
-                        <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                        <li className="page-item"><a className="page-link" href="#">2</a></li>
-                        <li className="page-item"><a className="page-link" href="#">3</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Trang sau</a></li>
-                    </ul>
+                    <Pagination pages = {pages}/>
                 </div>
             </div>
 

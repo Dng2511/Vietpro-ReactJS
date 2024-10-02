@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { getProducts } from "../../services/Api";
 import ProductItem from "../../shared/components/product-item";
 import Pagination from "../../shared/components/Pagination";
@@ -19,7 +19,7 @@ const Search = () => {
                 page: page,
             }
         }).then(({data})=>{
-            setPages({...pages, ...data.data.pages});
+            setPages(data.pages);
             setProduct(data.data.docs);
         })
     },[id, page])

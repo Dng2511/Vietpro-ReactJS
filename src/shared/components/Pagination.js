@@ -2,9 +2,8 @@ import { Link, useLocation, useSearchParams } from "react-router-dom";
 
 const Pagination = ({pages}) => {
 
-    const {limit, total, currentPage, next, prev, hasNext, hasPrev } = pages;
-    const {pathname, search} = useLocation();
-    const totalPages = Math.ceil(total/limit);
+    const {totalPage, currentPage, next, prev, hasNext, hasPrev } = pages;
+    const {pathname} = useLocation();
     const [searchParams] = useSearchParams();   
     const formatUrl =(page) => `${pathname}?name=${searchParams.get("name")}&page=${page}`;
 
@@ -12,8 +11,8 @@ const Pagination = ({pages}) => {
         const pagesHtml = [];
         const left = currentPage - delta;
         const right = currentPage + delta;
-        for (let i = 1; i<=totalPages;i++ ){
-            if(i===1 || i === totalPages || i === currentPage || (i>=left && i<= right)){
+        for (let i = 1; i<=totalPage;i++ ){
+            if(i===1 || i === totalPage || i === currentPage || (i>=left && i<= right)){
                 pagesHtml.push(i);
             }
             else if(

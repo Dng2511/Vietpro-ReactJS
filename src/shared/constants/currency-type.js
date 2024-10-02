@@ -1,1 +1,1 @@
-export const currencyType = (price) => `${eval(price).toLocaleString('vi')}đ`
+export const currencyType = (price) => `${parseInt(price).toLocaleString('vi')}đ`

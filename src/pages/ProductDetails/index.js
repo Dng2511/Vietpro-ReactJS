@@ -15,11 +15,16 @@ const ProductDetails = () => {
     const page = searchParams.get("page") || 1;
     const dispatch = useDispatch();
     const [productDetails, setProductDetails] = React.useState({});
-    const {name, image, accessories, status, promotion, price, is_stock, details} = productDetails;
+    const {name, thumbnail, accessories, status, promotion, price, is_stock, details} = productDetails;
     const [commentsList, setComment] = React.useState([]);
     const [inputComment, setInputComment] = React.useState([]);
     const [pages, setPages] = React.useState({})
-    const getComment = (id) => getCommentsProduct(id, {}).then(({ data }) => {
+    const getComment = (id) => getCommentsProduct(id, {
+        params: {
+            page,
+            limit: 10,
+        }
+    }).then(({ data }) => {
         setComment(data.data.docs)
         setPages(data.pages)});
     React.useEffect(() => {
@@ -46,9 +51,9 @@ const ProductDetails = () => {
             type: ADD_TO_CART,
             payload: {
                 _id: id,
-                name: name,
-                image: image,
-                price: price,
+                name,
+                thumbnail,
+                price,
                 qty: 1,
             }
         })
@@ -66,7 +71,7 @@ const ProductDetails = () => {
                 <div id="product">
                     <div id="product-head" className="row">
                         <div id="product-img" className="col-lg-6 col-md-6 col-sm-12">
-                            <img src={getImgProduct(image)} alt=""/>
+                            <img src={getImgProduct(thumbnail)} alt=""/>
                         </div>
                         <div id="product-details" className="col-lg-6 col-md-6 col-sm-12">
                             <h1>{name}</h1>

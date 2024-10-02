@@ -5,7 +5,7 @@ const Pagination = ({pages}) => {
     const {totalPage, currentPage, next, prev, hasNext, hasPrev } = pages;
     const {pathname} = useLocation();
     const [searchParams] = useSearchParams();   
-    const formatUrl =(page) => `${pathname}?name=${searchParams.get("name")}&page=${page}`;
+    const formatUrl =(page) => searchParams.get("name")?`${pathname}?name=${searchParams.get("name")}&page=${page}` : `${pathname}?page=${page}`;
 
     const renderPagesHtml = (delta = 2) =>{
         const pagesHtml = [];

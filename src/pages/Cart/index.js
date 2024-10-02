@@ -16,9 +16,9 @@ const Cart = () => {
         const {name, value} = e.target;
         setInfo({...info, [name]: value});
     }
-    const updateCart = (id, qty) => {
-        qty = parseInt(qty); 
-        if (qty <=0) 
+    const updateCart = (id, e) => {
+        const qty = parseInt(e.target.value); 
+        if (qty <=0) deleteCart(e, id)
         dispatch({
             type: UPDATE_CART,
             payload:{
@@ -69,11 +69,11 @@ const Cart = () => {
                                 items.map((item) =>{
                                       return (<div className="cart-item row">
                                             <div className="cart-thumb col-lg-7 col-md-7 col-sm-12">
-                                                <img src={getImgProduct(item.image)} />
+                                                <img src={getImgProduct(item.thumbnail)} />
                                                 <h4>{item.name}</h4>
                                             </div>
                                             <div className="cart-quantity col-lg-2 col-md-2 col-sm-12">
-                                                <input type="number" id="quantity" className="form-control form-blue quantity" onChange={(e) => updateCart(item._id, e.target.value)}  value = {item.qty}></input>
+                                                <input type="number" id="quantity" className="form-control form-blue quantity" onChange={(e) => updateCart(item._id, e)}  value = {item.qty}></input>
                                             </div>
                                             <div className="cart-price col-lg-3 col-md-3 col-sm-12"><b>{currencyType(item.qty*item.price)}</b><a onClick={(e) => deleteCart(e, item._id)} href = "#">Xóa</a></div>
                                         </div>)

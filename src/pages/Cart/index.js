@@ -47,6 +47,14 @@ const Cart = () => {
         else {
             postOrder(orderInfo, {}).then(({data}) => {
                 if (data.status == "success") {
+                    items.map((item) => {
+                        dispatch({
+                            type: DELETE_CART,
+                            payload: {
+                                _id: item._id,
+                            }
+                        })
+                    })
                     navigate('/Success');
                 } else alert("Đặt hàng thất bại!");
             })
